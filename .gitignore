@@ -1,0 +1,17 @@
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+appsettings.json
+appsettings.Development.json
+
+# Ignore lock files
+project.lock.json
+
+QuantBlazor.csproj

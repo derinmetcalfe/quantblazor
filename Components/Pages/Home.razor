@@ -1,0 +1,81 @@
+﻿@page "/"
+
+<!-- Hero Section -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 col-lg-6 mx-auto">
+            <h1 class="text-center display-4">Welcome to QuantBlazor</h1>
+            <p class="text-center lead">
+                Accurately price financial options using industry-standard models
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Features Section -->
+<div class="container my-5 mb-5 pb-4">
+    <h2 class="text-center mb-4">Models</h2>
+    <div class="row">
+        <!-- Black-Scholes Model -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Black-Scholes Model</h3>
+                    <p class="card-text">
+                        Utilise the Black-Scholes formula for pricing European options.
+                        This model assumes a constant volatility and interest rate.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Monte Carlo Simulation -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Monte Carlo Simulation</h3>
+                    <p class="card-text">
+                        Simulate numerous possible price paths to estimate option prices.
+                        Ideal for complex derivatives and options with American-style features.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Binomial Tree Model -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Binomial Tree Model</h3>
+                    <p class="card-text">
+                        Apply the binomial tree approach for step-by-step option valuation.
+                        Useful for pricing American options and options with dividends.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="container my-5 pb-5">
+    <h2 class="text-center">How It Works</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <i class="bi bi-search icon-feature"></i>
+            <h4>1. Input Parameters</h4>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-cpu icon-feature"></i>
+            <h4>2. Choose a Model</h4>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-bar-chart-line icon-feature"></i>
+            <h4>3. Get Results</h4>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 text-center">
+    <h2 class="mb-4">Ready to get started?</h2>
+    <a class="btn btn-custom" href="/option-pricing">Start Pricing</a>
+</div>

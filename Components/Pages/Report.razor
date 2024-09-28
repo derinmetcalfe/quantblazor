@@ -1,0 +1,129 @@
+@page "/report"
+@using QuantBlazor.DataModels
+@using QuantBlazor.OptionPricing
+@using QuantBlazor.Services
+@using QuantBlazor.Util
+@rendermode InteractiveServer
+@inject SharedDataService SharedDataService
+
+<div class="mb-4">
+    <h3 class="text-center">@(SharedDataService.SharedOptionType == OptionType.CallOption ? "Call" : "Put") Option Report</h3>
+</div>
+
+<div class="mb-5">
+    <div class="text-center alert alert-success" role="alert">
+        The calculated price is:
+        <strong>@($"{SharedDataService.SharedCalculatedPrice:C}")</strong>
+    </div>
+</div>
+
+<div class="mb-3 text-center">
+    <h4>Price over time</h4>
+</div>
+<div class="mb-4 d-flex justify-content-center">
+    <ApexChart TItem="HistoricalDataModel"
+               Title="Price Over Time"
+               Options="options"
+               Height="500"
+               Width="800">
+        <ApexPointSeries TItem="HistoricalDataModel"
+                         Items="priceData"
+                         Name="Price"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Close)"
+                         OrderBy="e => e.X"/>
+    </ApexChart>
+</div>
+
+<div class="mb-5">
+    <h4 class="mb-3 text-center">Stock Performance Summary</h4>
+    <div class="card">
+        <div class="card-body justify-content-center">
+            <table class="table table-striped table-hover">
+                <tbody>
+                <tr>
+                    <th scope="row">Current Price (USD)</th>
+                    <td>@($"{historicalDataModel.CurrentPrice:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Previous Close (USD)</th>
+                    <td>@($"{historicalDataModel.PreviousClose:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">52-Week High (USD)</th>
+                    <td>@($"{historicalDataModel.FiftyTwoWeekHigh:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">52-Week Low (USD)</th>
+                    <td>@($"{historicalDataModel.FiftyTwoWeekLow:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Day High (USD)</th>
+                    <td>@($"{historicalDataModel.DayHigh:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Day Low (USD)</th>
+                    <td>@($"{historicalDataModel.DayLow:C}")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Market Volume</th>
+                    <td>@historicalDataModel.Volume.ToString("N0")</td>
+                </tr>
+                <tr>
+                    <th scope="row">Currency</th>
+                    <td>USD</td>
+                </tr>
+                <tr>
+                    <th scope="row">Exchange Name</th>
+                    <td>@historicalDataModel.FullExchangeName</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private List<HistoricalDataModel> priceData = new();
+    private HistoricalDataModel historicalDataModel = new();
+    private ApexChartOptions<HistoricalDataModel> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        priceData = Util.ExtractHistoricalDataAdvanced(SharedDataService.SharedResponse);
+        historicalDataModel = Util.ExtractKeyResponseData(SharedDataService.SharedResponse);
+
+        options = new ApexChartOptions<HistoricalDataModel>
+        {
+            Chart = new Chart
+            {
+                Type = ChartType.Line, // Line chart type
+                Animations = new Animations
+                {
+                    Enabled = false
+                }
+            },
+            Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    Text = "Date" // X-axis label
+                },
+                Type = XAxisType.Datetime // X-axis represents date
+            },
+            Yaxis = new List<YAxis>
+            {
+                new()
+                {
+                    Title = new AxisTitle
+                    {
+                        Text = "Adjusted Price (USD)" // Y-axis label
+                    }
+                }
+            }
+        };
+    }
+
+}

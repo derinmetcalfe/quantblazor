@@ -1,0 +1,153 @@
+@page "/option-pricing"
+@rendermode InteractiveServer
+@using QuantBlazor.DataModels
+@using QuantBlazor.OptionPricing
+@using QuantBlazor.Services
+@using QuantBlazor.Util
+@inject YahooDataFetcher YahooDataFetcher
+@inject SharedDataService SharedDataService
+@inject NavigationManager Navigation
+
+
+<h2 class="text-center display-5">Option Pricing</h2>
+
+<div class="select-container">
+    <select @bind="optionInput.SelectedModel" class="potato-select">
+        @foreach (OptionPricingModelType model in Enum.GetValues(typeof(OptionPricingModelType)))
+        {
+            <option value="@model">@Util.FormatModelName(model.ToString())</option>
+        }
+    </select>
+</div>
+
+<div class="form-group mb-3">
+    <label for="tickerInput">Ticker symbol</label>
+    <input @bind="optionInput.Ticker" id="tickerInput" class="form-control"/>
+</div>
+
+<div class="form-group mb-3">
+    <label for="strikePriceInput">Strike price</label>
+    <input type="number" @bind="optionInput.StrikePrice" id="strikePriceInput" class="form-control"/>
+</div>
+
+
+<div class="form-group mb-3">
+    <label for="riskFreeRateInput">Risk-free rate (%)</label>
+    <input type="range" id="riskFreeRateInput" class="form-range" min="0" max="100" step="0.1" @bind="optionInput.RiskFreeRate"/>
+    <span>@optionInput.RiskFreeRate %</span>
+</div>
+
+<div class="form-group mb-3">
+    <label for="sigmaInput">Sigma (%)</label>
+    <input type="range" id="sigmaInput" class="form-range" min="0" max="100" step="0.1" @bind="optionInput.Sigma"/>
+    <span>@optionInput.Sigma %</span>
+</div>
+
+<div class="form-group mb-3">
+    <label for="exerciseDateInput">Exercise date</label>
+    <input @bind="optionInput.ExerciseDate" id="exerciseDateInput" type="date" class="form-control"/>
+</div>
+
+<div class="form-group mb-3 custom-container">
+    <label for="interval">Interval</label>
+    <select @bind="optionInput.SelectedInterval" id="interval" class="form-control">
+        @foreach (var interval in optionInput.Intervals)
+        {
+            <option value="@interval">@interval</option>
+        }
+    </select>
+</div>
+
+<div class="mb-3">
+    <InputRadioGroup TValue="OptionType" @bind-Value="@optionInput.OptionType">
+        <div>
+            <InputRadio Value="OptionType.CallOption"/> Call Option
+        </div>
+        <div>
+            <InputRadio Value="OptionType.PutOption"/> Put Option
+        </div>
+    </InputRadioGroup>
+</div>
+
+
+@if (optionInput.SelectedModel == OptionPricingModelType.MonteCarlo)
+{
+    <div class="form-group mb-3">
+        <label for="numSimulations">Number of simulations</label>
+        <input type="range" id="numSimulations" class="form-range" min="100" max="100000" step="100" @bind="optionInput.NumOfSimulations"/>
+        <span>@optionInput.NumOfSimulations</span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="numPriceSimulations">Number of price movement simulations to be visualised</label>
+        <input type="range" id="numPriceSimulations" class="form-range" min="0" max="1000" step="1" @bind="optionInput.NumOfPriceSimulations"/>
+        <span>@optionInput.NumOfPriceSimulations</span>
+    </div>
+
+    <div class="mb-3">
+        <div class="form-group mb-3">
+            <InputCheckbox @bind-Value="@optionInput.Visualise"/> Visualise price movements
+        </div>
+    </div>
+}
+@if (optionInput.SelectedModel == OptionPricingModelType.BinomialTree)
+{
+    <div class="form-group mb-3">
+        <label for="numTimeSteps">Number of time steps</label>
+        <input type="range" id="numTimeSteps" class="form-range" min="100" max="100000" step="100" @bind="optionInput.NumOfTimeSteps"/>
+        <span>@optionInput.NumOfTimeSteps</span>
+    </div>
+}
+
+<div class="d-flex justify-content-center">
+    <button class="btn btn-custom" @onclick="CalculateOptionPrice">Calculate option price for @optionInput.Ticker</button>
+</div>
+
+<p>
+    <br/>
+</p>
+
+@code {
+    private readonly OptionInputModel optionInput = new();
+    private double callOptionalPrice;
+
+    private async Task CalculateOptionPrice()
+    {
+        var tickerData = await YahooDataFetcher.FetchTickerData(
+            optionInput.Ticker,
+            optionInput.Period1,
+            optionInput.Period2,
+            optionInput.SelectedInterval,
+            false);
+        SharedDataService.SharedResponse = tickerData;
+        var prices = Util.ExtractAdjustedClosePrices(tickerData);
+        var pricingParams = new OptionPricingParametersModel
+        {
+            SpotPrice = Util.GetLastPrice(prices),
+            StrikePrice = optionInput.StrikePrice,
+            DaysToMaturity = Util.GetDaysToMaturity(optionInput.ExerciseDate),
+            RiskFreeRate = optionInput.RiskFreeRate / 100,
+            SigmaDecimal = optionInput.Sigma / 100,
+            NumOfSimulations = optionInput.NumOfSimulations,
+            NumOfTimeSteps = optionInput.NumOfTimeSteps,
+            OptionType = optionInput.OptionType
+        };
+        var model = OptionPricingModelFactory.CreateModel(
+            optionInput.SelectedModel,
+            pricingParams);
+        callOptionalPrice = model.CalculateOptionPrice(optionInput.OptionType);
+        SharedDataService.SharedCalculatedPrice = callOptionalPrice;
+        SharedDataService.SharedOptionType = optionInput.OptionType;
+
+        if (optionInput.SelectedModel == OptionPricingModelType.MonteCarlo && optionInput.Visualise)
+        {
+            SharedDataService.SharedMonteCarloModel = (MonteCarloModel)model;
+            Navigation.NavigateTo("/simulation2");
+        }
+        else
+        {
+            Navigation.NavigateTo("/report");
+        }
+    }
+
+}

@@ -1,0 +1,117 @@
+@page "/simulation2"
+@rendermode InteractiveServer
+@using QuantBlazor.DataModels
+@using QuantBlazor.OptionPricing
+@using QuantBlazor.Services
+@inject SharedDataService SharedDataService
+
+<div class="mb-4 text-center">
+    <h3>Monte Carlo Simulation: Simulated Price Movements</h3>
+</div>
+
+<div class="mb-4 d-flex justify-content-center">
+    <ApexChart TItem="SimulationResultModel" Title="Simulated Price Movements" Options="chartOptions" Height="500" Width="750">
+
+        <!-- Loop through each series of simulated data -->
+        @foreach (var series in simulationSeries)
+        {
+            <ApexPointSeries TItem="SimulationResultModel"
+                             Items="@series"
+                             Name="Simulations"
+                             XValue="@(e => e.Day)"
+                             YValue="@(e => Math.Round(e.Price))"/>
+        }
+    </ApexChart>
+</div>
+
+<div class="mb-3">
+    <Report/>
+</div>
+
+
+@code {
+    private List<List<SimulationResultModel>> simulationSeries = new();
+    private ApexChartOptions<SimulationResultModel> chartOptions;
+    private MonteCarloModel monteCarlo;
+
+    protected override void OnInitialized()
+    {
+        monteCarlo = SharedDataService.SharedMonteCarloModel;
+        monteCarlo.SimulatePrices();
+        
+        LoadSimulationDataFromMonteCarlo();
+
+        chartOptions = new ApexChartOptions<SimulationResultModel>
+        {
+            Chart = new Chart
+            {
+                Type = ChartType.Scatter, // Use point-based scatter plot
+                Zoom = new Zoom
+                {
+                    Enabled = true // Enable zooming to focus on specific sections
+                },
+                Toolbar = new Toolbar
+                {
+                    Show = true // Show toolbar for panning and zooming
+                }
+            },
+            Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    Text = "Days in Future"
+                },
+                Type = XAxisType.Numeric
+            },
+            Yaxis = new List<YAxis>
+            {
+                new()
+                {
+                    Title = new AxisTitle
+                    {
+                        Text = "Simulated Price Movements"
+                    }
+                }
+            },
+            Stroke = new Stroke
+            {
+                Width = new List<double> { 1 } // Set stroke width
+            },
+            Legend = new Legend
+            {
+                Show = false // Hide the legend to reduce clutter
+            },
+            Tooltip = new Tooltip
+            {
+                Enabled = true,
+                Shared = false, // Show tooltips for individual lines when hovered
+                FollowCursor = true
+            }
+        };
+    }
+
+    private void LoadSimulationDataFromMonteCarlo()
+    {
+        // Use a new list to minimize changes to the original one
+        var newSimulationSeries = new List<List<SimulationResultModel>>();
+
+        for (var i = 0; i < monteCarlo.N; i++)
+        {
+            var simulationData = new List<SimulationResultModel>();
+            for (var t = 0; t < monteCarlo.NumOfSteps; t++)
+            {
+                simulationData.Add(new SimulationResultModel
+                {
+                    Day = t,
+                    Price = (decimal)monteCarlo.SimulationResultsS[t, i]
+                });
+            }
+
+            newSimulationSeries.Add(simulationData);
+        }
+
+        // Only re-assign once to trigger UI update
+        simulationSeries = newSimulationSeries;
+    }
+
+}
