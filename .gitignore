@@ -8,10 +8,10 @@ obj/
 .vs/
 .vscode/
 .idea/
+.DS_Store
 appsettings.json
 appsettings.Development.json
+QuantBlazor.csproj
 
 # Ignore lock files
 project.lock.json
-
-QuantBlazor.csproj
