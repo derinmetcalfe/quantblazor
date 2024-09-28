@@ -36,7 +36,7 @@ The primary motivation for converting the Python-based QuantST application to a 
 These optimisations include:
 
 1. **Backward Induction and Memory Swap (BinomialTreeModel)**
-   Using backward induction and swapping arrays minimizes memory usage. Only the current and previous layers are kept in memory, reducing memory requirements to two arrays, enhancing performance during option pricing calculations.
+   Using backward induction and swapping arrays minimises memory usage. Only the current and previous layers are kept in memory, reducing memory requirements to two arrays, enhancing performance during option pricing calculations.
 
 2. **Parallelism in Monte Carlo Simulation (MonteCarloModel)**
    Parallelised the Monte Carlo simulations allows for concurrent execution, improving performance on multi-core processors. Each simulation runs in parallel threads, speeding up the generation of stock price paths for large numbers of simulations.
@@ -45,7 +45,7 @@ These optimisations include:
    Caching JSON properties like `chart` and `result` minimises the number of calls to `GetProperty()`, improving performance when extracting data from large JSON responses.
 
 4. **Memory Efficiency in Monte Carlo Model (MonteCarloModel)**  
-   Reducing the scope of large arrays by using local variables within threads avoids memory contention. Each thread gets its own copy of the array, improving memory efficiency and minimizing synchronization costs.
+   Reducing the scope of large arrays by using local variables within threads avoids memory contention. Each thread gets its own copy of the array, improving memory efficiency and minimising synchronisation costs.
 
 5. **Box-Muller Transform for Random Gaussian Generation (MonteCarloModel)**  
    Using the Box-Muller transform to generate Gaussian-distributed random numbers is an efficient method compared to more complex alternatives, enhancing the performance of the Monte Carlo simulations.
