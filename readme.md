@@ -5,13 +5,13 @@ three fundamental models. Users are able to fine-tune and configure these models
 
 ## Features
 
-- **Multiple Pricing Models**: Choose from Black-Scholes, Binomial Tree, or Monte Carlo Simulation to price options.
+- **Multiple Pricing Models**: Choose from Black-Scholes, Binomial Tree, or Monte Carlo Simulation to price options
 - **Real-Time Data Retrieval**: User inputs are used to build the API request string that pulls data directly from the relevant endpoint, minimalising overhead
 - **Interactive Visualisations**:
-    - Historical adjusted closing price of the selected stock.
-    - Simulated price paths from the Monte Carlo Simulation.
-- **User-Friendly Interface**: Intuitive input fields and sliders for setting parameters.
-- **Optimised Performance**: Leveraging computational optimisations and libraries for rapid calculations.
+    - Historical adjusted closing price of the selected stock
+    - Simulated price paths from the Monte Carlo Simulation
+- **User-Friendly Interface**: Intuitive input fields and sliders for setting parameters
+- **Optimised Performance**: Leveraging computational optimisations and libraries for rapid calculations
 
 ## Models Implemented
 
@@ -35,19 +35,19 @@ The primary motivation for converting the Python-based QuantST application to a 
 
 These optimisations include:
 
-1. **Backward Induction and Memory Swap (BinomialTreeModel)  **
+1. **Backward Induction and Memory Swap (BinomialTreeModel)**
    Using backward induction and swapping arrays minimizes memory usage. Only the current and previous layers are kept in memory, reducing memory requirements to two arrays, enhancing performance during option pricing calculations.
 
-2. Parallelism in Monte Carlo Simulation (MonteCarloModel)  
+2. **Parallelism in Monte Carlo Simulation (MonteCarloModel)**
    Parallelised the Monte Carlo simulations allows for concurrent execution, improving performance on multi-core processors. Each simulation runs in parallel threads, speeding up the generation of stock price paths for large numbers of simulations.
 
-3. Efficient JSON Parsing and Property Caching (Util)  
+3. **Efficient JSON Parsing and Property Caching (Util)**  
    Caching JSON properties like `chart` and `result` minimises the number of calls to `GetProperty()`, improving performance when extracting data from large JSON responses.
 
-4. Memory Efficiency in Monte Carlo Model (MonteCarloModel)  
+4. **Memory Efficiency in Monte Carlo Model (MonteCarloModel)**  
    Reducing the scope of large arrays by using local variables within threads avoids memory contention. Each thread gets its own copy of the array, improving memory efficiency and minimizing synchronization costs.
 
-5. Box-Muller Transform for Random Gaussian Generation (MonteCarloModel)  
+5. **Box-Muller Transform for Random Gaussian Generation (MonteCarloModel)**  
    Using the Box-Muller transform to generate Gaussian-distributed random numbers is an efficient method compared to more complex alternatives, enhancing the performance of the Monte Carlo simulations.
 
 <br>
