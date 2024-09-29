@@ -1,4 +1,4 @@
-## Introduction
+# QuantBlazor
 
 This application is designed to assist investors, traders, and financial analysts in pricing European options using
 three fundamental models. Users are able to fine-tune and configure these models using a variety of input parameters. The application accommodates both **call** and **put** option calculations.
@@ -51,7 +51,6 @@ These optimisations include:
    Using the Box-Muller transform to generate Gaussian-distributed random numbers is an efficient method compared to more complex alternatives, enhancing the performance of the Monte Carlo simulations.
 
 <br>
-
 <hr>
 
 **Disclaimer:** This application is for educational and informational purposes only and should not be considered financial advice. Always consult with a qualified financial professional before making investment decisions.
