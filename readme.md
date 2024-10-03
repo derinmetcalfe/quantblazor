@@ -6,7 +6,7 @@ three fundamental models. Users are able to fine-tune and configure these models
 ## Features
 
 - **Multiple Pricing Models**: Choose from Black-Scholes, Binomial Tree, or Monte Carlo Simulation to price options
-- **Real-Time Data Retrieval**: User inputs are used to build the API request string that pulls data directly from the relevant endpoint, minimalising overhead
+- **Real-Time Data Retrieval**: User inputs are used to build the API request string that pulls data directly from the relevant endpoint, minimising overhead
 - **Interactive Visualisations**:
     - Historical adjusted closing price of the selected stock
     - Simulated price paths from the Monte Carlo Simulation
